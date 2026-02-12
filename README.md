@@ -1,4 +1,4 @@
-# 🏦 Détection de Fraude Bancaire : Approche Hybride (IA & Forensique)
+# 🏦 Détection de Fraude Bancaire 
 
 > **Problématique :** *"Peut-on détecter des erreurs comptables ou des tentatives de fraude dans les rapports financiers annuels d’un groupe, tout en minimisant le coût des fraudes non détectées ?"*
 
@@ -37,12 +37,7 @@ Nous utilisons un algorithme de **Forêt Aléatoire** pour sa robustesse.
 | **Précision** | 98% | 85% |
 | **Risque Bancaire** | **Élevé** (Fraudes ratées) | **Maîtrisé** (Faux Positifs acceptables) |
 
-### Visualisation de l'Effet SMOTE
-*En rouge, les fraudes réelles. En orange, les fraudes synthétiques générées pour "apprendre" à l'IA.*
-![SMOTE Visualization](viz_smote.png)
 
 ## 4. Conclusion
 Ce projet démontre qu'il est possible d'automatiser la détection de fraudes comptables complexes. En combinant **l'analyse forensique (Benford)** pour détecter les manipulations humaines et le **Machine Learning rééquilibré (SMOTE)** pour repérer les anomalies financières, nous offrons une couverture de sécurité quasi-totale pour l'institution financière.
 
----
-*Projet réalisé par Antigravity & Sofia.*
