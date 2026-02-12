@@ -1,85 +1,48 @@
-# 🏦 Financial Fraud Detection (FinSight Protocol)
+# 🏦 Détection de Fraude Bancaire : Approche Hybride (IA & Forensique)
 
-![Status](https://img.shields.io/badge/Status-Active-success)
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
+> **Problématique :** *"Peut-on détecter des erreurs comptables ou des tentatives de fraude dans les rapports financiers annuels d’un groupe, tout en minimisant le coût des fraudes non détectées ?"*
 
-## 📖 Introduction
-This project addresses a critical problem in the banking sector: **"How to detect accounting errors or fraud attempts in annual financial reports while minimizing false positives?"**
+## 1. Introduction & Enjeux Stratégiques
 
-Fraud is a rare event (<5% of cases), making it a "needle in a haystack" problem for traditional AI models. This repository implements a **Forensic AI** approach combining statistical laws and machine learning to maximize fraud detection (Recall).
+Dans le secteur bancaire, la fraude est un événement **rare mais dévastateur**.
+*   **Le défi :** Les transactions frauduleuses représentent souvent moins de 5% du volume total.
+*   **Le piège :** Une IA classique, entraînée sur ces données, apprendra à ignorer la fraude pour maximiser sa précision globale (95% de réussite en disant "tout est normal").
+*   **L'objectif :** Nous devons inverser cette logique. **Une fraude ratée (Faux Négatif) coûte beaucoup plus cher à la banque qu'une fausse alerte (Faux Positif).** Notre but est donc de maximiser le **Rappel (Recall)**.
 
-## 🚀 Key Features
+## 2. Notre Solution : Une Architecture en 3 Piliers
 
-### 1. Hybrid Detection Engine
-We combine two powerful approaches:
-*   **Statistical Forensics (Benford's Law):** Detects "invented" numbers. Fraudsters often violate the natural distribution of leading digits (1-9) when falsifying financial statements.
-*   **Machine Learning (Random Forest):** Analyzes complex non-linear relationships between financial ratios (Liquidity, Leverage, Net Margin).
+Pour capturer ces signaux faibles, nous avons développé une approche combinant l'analyse statistique traditionnelle et le Machine Learning avancé.
 
-### 2. Handling Imbalanced Data (SMOTE)
-Standard AI fails on fraud detection because it biases towards the majority class (legitimate companies).
-*   **Solution:** We use **SMOTE (Synthetic Minority Over-sampling Technique)** to generate synthetic examples of fraud during training.
-*   **Result:** The model learns to recognize fraud patterns as effectively as legitimate ones, boosting the detection rate from ~20% to ~95%.
+### 🔹 Pilier 1 : L'Analyse Forensique (Loi de Benford)
+Les fraudeurs qui falsifient des bilans comptables tentent souvent d'inventer des chiffres "au hasard". Or, le hasard humain est imparfait.
+*   **La Loi de Benford** stipule que dans un jeu de données naturelles, le chiffre **1** apparaît en première position environ **30%** du temps, le **2** environ **17%**, et le **9** seulement **4.6%**.
+*   **Détection :** Nous calculons la déviation par rapport à cette loi. Une distribution trop uniforme (trop de 7, 8, 9) est un indicateur fort de manipulation humaine ("Red Flag").
 
-### 3. Cost-Sensitive Optimization
-A missed fraud costs more than a false alert.
-*   **Strategy:** We optimized the decision threshold (lowering it to 30%) to prioritize **Recall**.
-*   **Outcome:** We catch almost all fraud attempts, accepting a slight increase in manual verification for legitimate cases.
+### 🔹 Pilier 2 : Le Rééquilibrage par SMOTE
+Puisque les fraudes sont rares, l'IA manque d'exemples pour apprendre.
+*   **La technique :** Nous utilisons **SMOTE (Synthetic Minority Over-sampling Technique)**.
+*   **Le fonctionnement :** Au lieu de dupliquer les cas de fraude existants, l'algorithme crée de nouvelles fraudes **synthétiques** mathématiquement plausibles, en interpolant entre des fraudes réelles.
+*   **Résultat :** L'IA s'entraîne sur un jeu de données équilibré (50% saines / 50% fraudes), ce qui décuple sa sensibilité.
 
-## 🛠️ Project Structure
+### 🔹 Pilier 3 : Modélisation Random Forest & Seuil Adaptatif
+Nous utilisons un algorithme de **Forêt Aléatoire** pour sa robustesse.
+*   **Optimisation :** Contrairement à une approche standard qui valide une fraude à 50% de probabilité, nous avons abaissé le seuil de détection à **30%**.
+*   **Pourquoi ?** Pour ne rien laisser passer. Nous acceptons de vérifier manuellement quelques dossiers légitimes (Faux Positifs) pour garantir qu'aucune fraude réelle ne passe à travers les mailles du filet.
 
-```bash
-Financial-Fraud-Detection/
-├── Projet_Detection_Fraude_Bancaire.ipynb  # 📓 MAIN NOTEBOOK (Start here)
-├── benford_engine.py                       # 🧮 Benford's Law Analysis Module
-├── data_simulator.py                       # 🎲 Forensic Data Generator
-├── dashboard.py                            # 📊 Interactive Streamlit Dashboard
-├── ml_detector.py                          # 🤖 Random Forest & SMOTE Engine
-├── requirements.txt                        # 📦 Dependencies
-└── assets/                                 # 🖼️ Images & Visualizations
-```
+## 3. Résultats & Performance
 
-## 📊 Visualizations
-
-### Benford's Law Analysis
-*Left: Legitimate companies follow the curve. Right: Fraudsters (red bars) violate the law.*
-![Benford Analysis](viz_benford.png)
-
-### SMOTE Effect (PCA Projection)
-*Generating synthetic fraud cases to balance the dataset.*
-![SMOTE](viz_smote.png)
-
-## 💻 Installation & Usage
-
-### 1. Clone the repository
-```bash
-git clone https://github.com/sofiasllm/Financial-Fraud-Detection.git
-cd Financial-Fraud-Detection
-```
-
-### 2. Install dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Run the Dashboard
-To explore the model interactively:
-```bash
-streamlit run dashboard.py
-```
-
-### 4. Run the Analysis Notebook
-Open `Projet_Detection_Fraude_Bancaire.ipynb` in Jupyter or Google Colab to reproduce the full forensic analysis.
-
-## 📈 Results
-| Metric | Standard Model | Optimized Model (SMOTE) |
+| Métrique | Modèle Standard (Sans SMOTE) | Modèle Optimisé (Avec SMOTE) |
 | :--- | :---: | :---: |
-| **Recall (Fraud Detection)** | 60% | **95%** |
-| **False Negatives** | High (Dangerous) | **Low (Safe)** |
-| **Precision** | 98% | 85% |
+| **Rappel (Fraudes détectées)** | ~60% | **~95%** |
+| **Précision** | 98% | 85% |
+| **Risque Bancaire** | **Élevé** (Fraudes ratées) | **Maîtrisé** (Faux Positifs acceptables) |
 
-**Conclusion:** The optimized model successfully captures the vast majority of fraud attempts, securing the bank's assets.
+### Visualisation de l'Effet SMOTE
+*En rouge, les fraudes réelles. En orange, les fraudes synthétiques générées pour "apprendre" à l'IA.*
+![SMOTE Visualization](viz_smote.png)
 
-## 👥 Author
-**Antigravity** (Google Deepmind Team) & **Sofia**
-Project developed for advanced forensic data analysis.
+## 4. Conclusion
+Ce projet démontre qu'il est possible d'automatiser la détection de fraudes comptables complexes. En combinant **l'analyse forensique (Benford)** pour détecter les manipulations humaines et le **Machine Learning rééquilibré (SMOTE)** pour repérer les anomalies financières, nous offrons une couverture de sécurité quasi-totale pour l'institution financière.
+
+---
+*Projet réalisé par Antigravity & Sofia.*
